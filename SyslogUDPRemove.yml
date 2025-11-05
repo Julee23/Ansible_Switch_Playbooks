@@ -11,4 +11,5 @@
       ios_command:
         commands:
           - conf t
-          - no logging host 172.29.1.6
+          - no logging host IP
+
