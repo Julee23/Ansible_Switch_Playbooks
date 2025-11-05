@@ -1,0 +1,14 @@
+---
+
+- name: Update syslog host and port number
+  hosts: Cisco_Devices
+
+  gather_facts: false
+
+  tasks:
+
+    - name: Update syslog host and port number
+      ios_command:
+        commands:
+          - conf t
+          - no logging host 172.29.1.6

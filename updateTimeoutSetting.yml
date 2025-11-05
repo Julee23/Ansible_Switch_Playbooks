@@ -1,0 +1,28 @@
+---
+
+- name: Upgrade Cisco IOS
+  hosts: Cisco_Devices
+  gather_facts: yes
+
+  tasks:
+    - name: RUN 'Changing line vty timeouts'
+      cisco.ios.ios_config:
+          lines:
+            - session-timeout 10
+            - exec-timeout 2 30
+          parents:
+            - line vty 0 4
+
+    - name: Save Running Config
+      ios_config:
+        save_when: always
+
+    - name: Print settings of line vty
+      ios_command:
+        commands:
+           - sh run | sec line vty 0 4
+      register: results
+
+    - name: Print results
+      debug:
+        var: results.stdout_lines

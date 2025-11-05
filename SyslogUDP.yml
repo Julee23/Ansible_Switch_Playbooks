@@ -1,0 +1,22 @@
+---
+
+- name: Update syslog host and port number
+  hosts: Cisco_Devices
+
+  gather_facts: false
+
+  tasks:
+
+    - name: Update syslog host and port number
+      ios_command:
+        commands:
+          - conf t
+          - logging on
+          - logging facility local7
+          - logging trap debugging
+          - logging host {{ syslog_host }} transport udp port {{ new_port }}
+
+      vars:
+        syslog_host: 172.29.1.6
+        new_port: 5140
+

@@ -1,0 +1,23 @@
+---
+
+- name: Update syslog host and port number
+  hosts: Cisco_Devices
+
+  gather_facts: false
+
+  tasks:
+
+    - name: Disable auto recovery on Switchports
+      ios_command:
+        commands:
+          - conf t
+          - no errdisable recovery cause psecure-violation
+          - end
+          - wr
+      register: config
+
+    - name: Print results
+      debug:
+        var: config.stdout_lines
+
+

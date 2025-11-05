@@ -1,0 +1,31 @@
+---
+
+- name: Show all Access-lists
+  hosts: Cisco_Devices
+  gather_facts: false
+  vars:
+	- IP_address: "00.00.00.00" 
+    ##update IP address to add
+  tasks:
+    - name: Show Access-list
+      ios_command:
+        commands:
+          - sh access-list
+      register:  config
+
+    - name: Print results
+      debug:
+        var: config.stdout_lines
+
+    - name: create access-list to allow access to Support1
+      ios_command:
+        commands:
+          - config t
+          - ip access-list extended 101
+          - 125  permit tcp host {{ IP_address }} any eq 22
+          - do sh access-list
+      register:  config2
+
+    - name: Print results
+      debug:
+        var: config2.stdout_lines

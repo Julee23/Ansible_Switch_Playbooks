@@ -1,0 +1,34 @@
+---
+- name: Remove local Account
+  hosts: Cisco_Devices
+  gather_facts: false
+  connection: local
+  vars_prompt:
+    - name: switch_username
+      prompt: "Enter the username to delete:"
+
+
+  tasks:
+    - name: Delete a user account
+      ios_user:
+        name: "{{ switch_username }}"
+        state: absent
+    - name: Show users
+      ios_command:
+        commands:
+          - sh run | inc username
+      register: command_output
+
+    - name: Save configuration
+      ios_command:
+        commands:
+          - wr
+      register: save_output
+
+    - name: Display command output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Display save output
+      debug:
+        var: save_output.stdout_lines

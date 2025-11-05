@@ -1,0 +1,19 @@
+---
+- name: Change password of adm-net user
+  hosts: Cisco_Devices
+  gather_facts: no
+
+  vars:
+    new_password: "()_mico!"
+
+  tasks:
+    - name: Configure new password
+      ios_config:
+        lines:
+          - username adm-net secret {{ new_password }}
+        save_when: modified
+      register: ios_config_result
+
+    - name: Debug Password change
+      debug:
+        var: ios_config_result

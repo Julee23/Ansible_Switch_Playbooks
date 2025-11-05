@@ -1,0 +1,11 @@
+- create a new user (adm-net1)
+- can reset adm-net1 user password (other playbook)
+- remove user (ciscoadmin) - other playbook
+- reset user's password (adm-net1) and enable password (either new playbook or the same one)
+
+ciscoadmin
+xxxx
+enable
+xxxx
+
+for year, i want to get a procedure to reset password yearly

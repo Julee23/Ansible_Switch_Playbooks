@@ -1,0 +1,36 @@
+---
+
+- name: Update SNMP service IPs
+  hosts: Cisco_Devices
+  gather_facts: false
+
+  tasks:
+    - name: Remove access-list snmp-service
+      ios_command:
+        commands:
+          - config t
+          - no ip access-list standard snmp-service
+          
+    - name: Create new SNMP ACL
+      cisco.ios.ios_config:
+        lines:
+          - remark SNMP POLLER SERVER#1
+          - permit IP1  //Replace IP address
+          - remark SNMP POLLER SERVER#2
+          - permit IP2  //Replace IP address
+
+        parents:
+          - ip access-list standard snmp-service
+            
+    - name: Show ACL 
+      ios_command:
+        commands:
+          - sh ip access-list | sec snmp-service
+		
+        register: config
+		
+    - name: Print results
+      debug:
+        var: config.stdout_lines
+
+

@@ -1,0 +1,40 @@
+- name: Get software version, uptime, and serial number of Cisco switches
+  hosts: Cisco_Devices
+  gather_facts: no
+
+  tasks:
+    - name: Get IOS facts
+      ios_facts:
+
+    - name: Get switch information
+      ios_command:
+        commands:
+          - show version | include Cisco IOS
+          - show version | include uptime
+          - show version | include Serial Number
+          - show version | include Model Number
+          - show inventory | inc PID
+          - sh environment
+          - show version | include PowerOn
+
+      register: switch_info_output1
+
+    - name: Save results to CSV file
+      csvfile:
+        path: switch_info.csv
+        mode: append
+        delimiter: ','
+        quotechar: '"'
+        row:
+          - "{{ inventory_hostname }}"
+          - "{{ switch_info_output1.stdout_lines[0] | regex_replace('Cisco IOS Software', '') }}"
+          - "{{ switch_info_output1.stdout_lines[1] }}"
+          - "{{ switch_info_output1.stdout_lines[2] }}"
+          - "{{ switch_info_output1.stdout_lines[3] }}"
+          - "{{ switch_info_output1.stdout_lines[4] | regex_replace('PID:', '') }}"
+          - "{{ switch_info_output1.stdout_lines[5] }}"
+          - "{{ switch_info_output1.stdout_lines[6] }}"
+
+    - name: Print results
+      debug:
+        var: switch_info_output1.stdout_lines

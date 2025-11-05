@@ -1,0 +1,25 @@
+---
+- name: Get software version, uptime, and serial number of Cisco switches
+  hosts: Cisco_Devices
+  gather_facts: no
+
+  tasks:
+    - name: Get IOS facts
+      ios_facts:
+
+    - name: Get switch information
+      ios_command:
+        commands:
+          - show version | include Cisco IOS
+          - show version | include uptime
+          - show version | include Serial Number
+          - show version | include Model Number
+          - show inventory | inc PID
+          - sh environment
+          - show version | include PowerOn
+
+      register: switch_info_output1
+
+    - name: Print results
+      debug:
+        var: switch_info_output1.stdout_lines

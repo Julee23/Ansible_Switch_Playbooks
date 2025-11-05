@@ -1,0 +1,21 @@
+---
+
+- name: Update Severity to Warning
+  hosts: Cisco_Devices
+  gather_facts: false
+  tasks:
+    - name: Change Config of logging trap
+      ios_command:
+        commands:
+          - conf t
+          - logging trap warning
+
+    - name: collect log result
+      ios_command:
+        commands:
+          - sh log | inc logging
+      register: config
+
+    - name: Print results
+      debug:
+        var: config.stdout_lines

@@ -1,0 +1,40 @@
+---
+- name: Create Cisco switch user
+  hosts: [Cisco_Devices]
+  gather_facts: no
+  vars_prompt:
+
+    - name: switch_username
+      prompt: "Enter the username for the new user"
+
+    - name: switch_password
+      prompt: "Enter the password for the new user"
+      private: yes
+
+    - name: switch_privilege
+      prompt: "Enter the privilege level for the new user (0-15):"
+      default: 15
+
+  tasks:
+    - name: Configure new user
+      ios_command:
+        commands:
+          - conf t
+          - username {{ switch_username }} privilege 15 secret {{ switch_password }}
+          - do sh run | inc username
+      register: command_output
+
+    - name: Save configuration
+      ios_command:
+        commands:
+          - wr
+      register: save_output
+
+    - name: Display command output
+      debug:
+        var: command_output.stdout_lines
+
+    - name: Display save output
+      debug:
+        var: save_output.stdout_lines
+

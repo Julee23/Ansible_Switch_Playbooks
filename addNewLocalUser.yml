@@ -1,0 +1,37 @@
+---
+- name: Add adm-net Account if missing
+  hosts: Cisco_Devices
+  vars_files:
+    - new-user.yml
+  gather_facts: false
+  connection: local
+
+  tasks:
+    - name: Configure adm-net Account on devices
+      ios_config:
+        lines:
+          - username {{user}} secret {{pass}}
+        save_when: changed
+#      when: ACCOUNT.stdout[0] is not search ("username adm-net")
+
+    - name: set adm-net user to privilege level 15
+      cisco.ios.ios_user:
+        aggregate:
+        - name: username {{user}}
+        privilege: 15
+        state: present
+    
+    - name: show run
+      ios_command:
+        commands:
+        - show run | i username
+#             - show ip route
+#             - show ip eigrp neighbors
+#             - show version
+      register: config
+
+    - name: save output to local directory
+      copy:
+        content: "{{ config.stdout | replace('\\n', '\n') }}"           
+        dest: "/root/ansible1/cisco/NewUser/{{ inventory_hostname }}.ios"
+

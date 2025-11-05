@@ -1,0 +1,39 @@
+---
+- name: Add new user to Cisco switch
+  hosts: Cisco_Devices
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: Prompt for new user credentials
+      vars_prompt:
+        - name: username
+          prompt: "Enter new user's username"
+        - name: password
+          prompt: "Enter new user's password"
+          private: yes
+
+    - name: Configure new user
+      ios_command:
+        commands:
+          - "username {{ username }} privilege 15 secret {{ password }}"
+        provider:
+          username: admin
+          password: admin_password
+          host: "{{ inventory_hostname }}"
+          authorize: yes
+          auth_pass: enable_password
+          transport: cli
+        register: output
+
+    - name: show run
+      ios_command:
+        commands:
+          - show run | i username
+        register: config
+
+    - name: save output to local directory
+      copy:
+        content: "{{ config.stdout | replace('\\n', '\n') }}"
+        dest: "/root/ansible1/logs/{{ inventory_hostname }}.ios"
+

@@ -1,0 +1,25 @@
+---
+
+- name: Update NTP server
+  hosts: Cisco_Devices
+  gather_facts: false
+  tasks:
+
+    - name: Update NTP server in config
+      ios_command:
+        commands:
+          - conf t
+          - clock summer-time BST date Mar 31 2024 01:00 Oct 27 2024 01:00
+          - service timestamps log datetime localtime
+
+    - name: Show Final Clock
+      ios_command:
+        commands:
+          - sh clock detail
+          - sh ntp asso
+      register: result
+
+    - name: Print results
+      debug:
+        var: result.stdout_lines
+
