@@ -12,7 +12,7 @@
         lines:
           - username {{user}} secret {{pass}}
         save_when: changed
-#      when: ACCOUNT.stdout[0] is not search ("username adm-net")
+#      when: ACCOUNT.stdout[0] is not search ("username")
 
     - name: set adm-net user to privilege level 15
       cisco.ios.ios_user:
