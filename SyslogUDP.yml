@@ -17,6 +17,7 @@
           - logging host {{ syslog_host }} transport udp port {{ new_port }}
 
       vars:
-        syslog_host: 172.29.1.6
+        syslog_host: IP
         new_port: 5140
+
 
